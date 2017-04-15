@@ -12,14 +12,14 @@ import pylab
 from matplotlib.dates import DateFormatter, WeekdayLocator, DayLocator, MONDAY
 from matplotlib.finance import candlestick_ohlc
 
+import numpy as np
+
 def fin_main():
     #google,  msft, amzn ,  apple = pd.DataFrame(),pd.DataFrame(),pd.DataFrame(),pd.DataFrame()
     #get_stock_data(google,msft,amzn,apple)
-    #plot_data(google)
-    #plot_plotly(google)
-    #pandas_candlestick_ohlc(google)
+    
     #Multiple tickers
-    start = datetime.datetime(2017,1,1)
+    start = datetime.datetime(2005,1,1)
     end = datetime.date.today()
     
     google = data.DataReader('GOOG','yahoo',start,end)
@@ -27,13 +27,18 @@ def fin_main():
     amzn = data.DataReader('AMZN','yahoo',start,end)
     apple = data.DataReader('AAPL','yahoo',start,end)
     
-    stocks = pd.DataFrame({'AAPL': apple['Adj Close'],
-        'MSFT': msft['Adj Close'],
+    stocks = pd.DataFrame({
+        'AAPL': apple['Adj Close'],
+        #'MSFT': msft['Adj Close'],
         'GOOG': google['Adj Close'],
         'AMZN': amzn['Adj Close']
     })
-    
-    plot_multiple_tickers(stocks)
+    #plot_data(google)
+    #plot_plotly(google)
+    #pandas_candlestick_ohlc(google)
+    #plot_multiple_tickers(stocks)
+    #stock_returns(stocks)
+    stock_change_by_day(stocks)
     
 def get_stock_data(google,msft,amzn,apple):
     start = datetime.datetime(2017,1,1)
@@ -47,6 +52,7 @@ def get_stock_data(google,msft,amzn,apple):
 def plot_data(df):
     #pylab.rcParams['figure.figsizes'] = (15,9)
     df['Adj Close'].plot(grid=True)
+    
 def plot_plotly(df):
     data = [
             go.Scatter(x=df['Close'],y=df['Open'])
@@ -136,5 +142,15 @@ def pandas_candlestick_ohlc(dat, stick = "day", otherseries = None):
 
 def plot_multiple_tickers(stocks):
     stocks.plot(grid=True)
+    stocks.plot(secondary_y = ["AAPL", "MSFT"], grid = True)
+    
+def stock_returns(returns):
+    stock_return = returns.apply(lambda x: x/x[0])
+    #stock_return.head()
+    stock_return.plot(grid=True).axhline(y=1,color='black',lw=2)
+    
+def stock_change_by_day(changes):
+    stock_change = changes.apply(lambda x: np.log(x) - np.log(x.shift(1)))
+    stock_change.plot(grid=True).axhline(y=1,color='black',lw=2)
 
 if __name__ == '__main__': fin_main()
