@@ -38,7 +38,8 @@ def fin_main():
     #pandas_candlestick_ohlc(google)
     #plot_multiple_tickers(stocks)
     #stock_returns(stocks)
-    stock_change_by_day(stocks)
+    #stock_change_by_day(stocks)
+    moving_average(apple)
     
 def get_stock_data(google,msft,amzn,apple):
     start = datetime.datetime(2017,1,1)
@@ -152,5 +153,12 @@ def stock_returns(returns):
 def stock_change_by_day(changes):
     stock_change = changes.apply(lambda x: np.log(x) - np.log(x.shift(1)))
     stock_change.plot(grid=True).axhline(y=1,color='black',lw=2)
+    
+def moving_average(apple):
+    apple["20d"] = np.round(apple["Close"].rolling(window = 20, center = False).mean(), 2)
+    apple["50d"] = np.round(apple["Close"].rolling(window = 50, center = False).mean(), 2)
+    apple["200d"] = np.round(apple["Close"].rolling(window = 200, center = False).mean(), 2)
+
+    pandas_candlestick_ohlc(apple.loc['2016-01-04':'2016-08-07',:], otherseries = ["20d", "50d", "200d"])
 
 if __name__ == '__main__': fin_main()
