@@ -41,10 +41,10 @@ def main():
     msft = adj_close.ix[:,'MSFT']
     
     #Calculate the 20 and 100 dys moving averages of the closing price
-    short_rolling_msft = msft.rolling(window=30).mean()
-    long_rolling_msft = msft.rolling(window=175).mean()
+    #short_rolling_msft = msft.rolling(window=30).mean()
+    #long_rolling_msft = msft.rolling(window=175).mean()
     
-    mat_plot_adj_close()
+    mat_plot_adj_close(msft)
 #Plotting
 def plot_adj_close():
     fig = plt.figure()
@@ -56,8 +56,10 @@ def plot_adj_close():
     ax.set_ylabel('Adjusted closing price($)')
     ax.legend()
     
-def mat_plot_adj_close():
-    plt.plot(msft.index,msft,label='MSFT')
+def mat_plot_adj_close(df):
+    short_rolling_msft = df.rolling(window=30).mean()
+    long_rolling_msft = df.rolling(window=175).mean()
+    plt.plot(df.index,df,label='MSFT')
     plt.plot(short_rolling_msft.index,short_rolling_msft,label='20 days rolling')
     plt.plot(long_rolling_msft.index,long_rolling_msft,label='100 days rolling')
     plt.show()
